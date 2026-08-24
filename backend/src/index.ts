@@ -5,9 +5,18 @@ import "dotenv/config";
 import fs from "node:fs";
 import path from "node:path";
 
+import {getEnv} from "./lib/env"
+import keepAliveCorn from "./lib/cron"
+
+const env = getEnv()
+
 const app = express();
 app.use(express.json());
 app.use(cors());
+
+app.get("/health",(_req,res)=>{
+  res.json({status:"ok"})
+})
 
 const publicDir = path.join(process.cwd(), "public");
 //cwd is current working directory &
@@ -38,6 +47,10 @@ if (fs.existsSync(publicDir)) {
   });
 }
 
-app.listen(process.env.PORT, () => {
-  console.log(`Server is running on port ${process.env.PORT}`);
+app.listen( env.PORT , () => {
+  console.log(`Server is running on port ${env.PORT}`);
+
+  if(env.NODE_ENV === "production"){
+    keepAliveCorn.start()
+  }
 });
