@@ -1,111 +1,475 @@
+@import url("https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900;1,8..60,200..900&family=Manrope:wght@200..800&display=swap");
+
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@import "@fontsource-variable/geist";
+
+/* =========================================================
+   JHALAKATHI GOVT. WOMEN'S COLLEGE DESIGN SYSTEM
+   Light theme only
+
+   This @theme block is the SINGLE SOURCE OF TRUTH for every
+   color in the app. The shadcn semantic variables in :root
+   below all reference these tokens via var(...) instead of
+   repeating the hex values — change a color once here and
+   it updates everywhere (utilities + shadcn components).
+   ========================================================= */
+
+@theme {
+  /* ---------- College Colors ---------- */
+
+  --color-primary: #4c6546;
+  --color-primary-container: #a1bc98;
+  --color-on-primary: #ffffff;
+  --color-on-primary-container: #354c30;
+
+  --color-secondary: #4d6453;
+  --color-secondary-container: #cde6d1;
+  --color-on-secondary: #ffffff;
+  --color-on-secondary-container: #516857;
+
+  --color-tertiary: #7b5362;
+  --color-on-tertiary: #ffffff;
+
+  --color-background: #faf9f5;
+  --color-surface: #faf9f5;
+  --color-surface-bright: #faf9f5;
+
+  --color-surface-gray: #f5f7f5;
+
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #f5f4ef;
+  --color-surface-container: #efeee9;
+  --color-surface-container-high: #e9e8e4;
+  --color-surface-container-highest: #e3e2de;
+
+  --color-on-surface: #1b1c19;
+  --color-on-surface-variant: #434840;
+
+  --color-text-main: #2c332c;
+
+  --color-border-neutral: #e0e4e0;
+  --color-outline: #747970;
+  --color-outline-variant: #c3c8be;
+
+  --color-error: #ba1a1a;
+  --color-error-container: #ffdad6;
+  --color-on-error: #ffffff;
+
+  --color-notice-red: #d32f2f;
+  --color-alert-amber: #fbc02d;
+
+  /* ---------- Typography ---------- */
+
+  --font-family-label-md: "Manrope", sans-serif;
+  --font-family-body-md: "Manrope", sans-serif;
+  --font-family-body-lg: "Manrope", sans-serif;
+  --font-family-notice-text: "Manrope", sans-serif;
+
+  --font-family-headline-md: "Source Serif 4", serif;
+  --font-family-headline-lg: "Source Serif 4", serif;
+  --font-family-headline-lg-mobile: "Source Serif 4", serif;
+  --font-family-display-lg: "Source Serif 4", serif;
+
+  /* ---------- Text Sizes ---------- */
+
+  --text-label-md: 14px;
+  --text-label-md--line-height: 20px;
+
+  --text-body-md: 16px;
+  --text-body-md--line-height: 24px;
+  
+
+  --text-body-sm: 14px;
+  --text-body-sm--line-height: 23px;
+
+  --text-body-lg: 18px;
+  --text-body-lg--line-height: 28px;
+
+  --text-body-xl: 25px;
+  --text-body-xl--line-height: 35px;
+
+  --text-headline-md: 24px;
+  --text-headline-md--line-height: 32px;
+
+  --text-headline-lg: 32px;
+  --text-headline-lg--line-height: 40px;
+
+  --text-headline-lg-mobile: 28px;
+  --text-headline-lg-mobile--line-height: 36px;
+
+  --text-display-sm: 30px;
+  --text-display-lg: 48px;
+  --text-display-lg--line-height: 56px;
+}
+
+/* =========================================================
+   SHADCN SEMANTIC VARIABLES
+   Light theme only
+
+   Every value below is a reference into the @theme college
+   palette above — no hex codes are repeated here. Chart-5
+   is the one exception: it has no matching college token
+   (closest is --color-on-primary-container, but the hex
+   differs by one digit — #354d30 vs #354c30 — so it's kept
+   literal rather than silently merged with a slightly
+   different color).
+   ========================================================= */
+
 :root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
-  --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+  --background: var(--color-background);
+  --foreground: var(--color-text-main);
 
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --mono: ui-monospace, Consolas, monospace;
+  --card: var(--color-surface-container-lowest);
+  --card-foreground: var(--color-text-main);
 
-  font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
-  color-scheme: light dark;
-  color: var(--text);
-  background: var(--bg);
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  --popover: var(--color-surface-container-lowest);
+  --popover-foreground: var(--color-text-main);
 
-  @media (max-width: 1024px) {
-    font-size: 16px;
+  --primary: var(--color-primary);
+  --primary-foreground: var(--color-on-primary);
+
+  --secondary: var(--color-secondary);
+  --secondary-foreground: var(--color-on-secondary);
+
+  --muted: var(--color-surface-container-low);
+  --muted-foreground: var(--color-on-surface-variant);
+
+  --accent: var(--color-primary-container);
+  --accent-foreground: var(--color-on-primary-container);
+
+  --destructive: var(--color-error);
+
+  --border: var(--color-border-neutral);
+  --input: var(--color-border-neutral);
+  --ring: var(--color-primary);
+
+  --chart-1: var(--color-primary);
+  --chart-2: var(--color-secondary);
+  --chart-3: var(--color-tertiary);
+  --chart-4: var(--color-primary-container);
+  --chart-5: #354d30;
+
+  --radius: 0.625rem;
+
+  --sidebar: var(--color-surface-container-lowest);
+  --sidebar-foreground: var(--color-text-main);
+  --sidebar-primary: var(--color-primary);
+  --sidebar-primary-foreground: var(--color-on-primary);
+  --sidebar-accent: var(--color-primary-container);
+  --sidebar-accent-foreground: var(--color-on-primary-container);
+  --sidebar-border: var(--color-border-neutral);
+  --sidebar-ring: var(--color-primary);
+}
+
+/* =========================================================
+   SHADCN → TAILWIND MAPPING
+   ========================================================= */
+
+@theme inline {
+  --font-heading: "Source Serif 4", serif;
+  --font-sans: "Manrope", sans-serif;
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+
+  --color-destructive: var(--destructive);
+
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+/* =========================================================
+   BASE
+   ========================================================= */
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    font-family: "Manrope", sans-serif;
+  }
+
+  body {
+    margin: 0;
+    background: var(--color-background);
+    color: var(--color-text-main);
+  }
+
+  *,
+  ::before,
+  ::after {
+    @apply border-border;
+  }
+
+  button,
+  a {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  button {
+    cursor: pointer;
   }
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
+/* =========================================================
+   SIDEBAR LINK
+   Matches the original HTML design
+   ========================================================= */
+
+@layer components {
+  .sidebar-link {
+    position: relative;
+    z-index: 10;
+
+    display: block;
+    overflow: hidden;
+
+    border-radius: 0.5rem;
+    padding: 0.625rem 1rem;
+
+    color: var(--color-on-primary-container);
+
+    transition:
+      color 300ms ease,
+      transform 300ms ease;
   }
 
-  #social .button-icon {
-    filter: invert(1) brightness(2);
+  .sidebar-link::before {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+
+    content: "";
+
+    background: var(--color-primary);
+
+    transform: scaleX(0);
+    transform-origin: right;
+
+    transition: transform 300ms ease;
+  }
+
+  .sidebar-link:hover {
+    color: #ffffff;
+    transform: translateX(-2px);
+  }
+
+  .sidebar-link:hover::before {
+    transform: scaleX(1);
+  }
+
+  /* =======================================================
+     MENU BUTTON
+     ======================================================= */
+
+  .menu-button {
+    position: relative;
+    z-index: 10;
+    overflow: hidden;
+    isolation: isolate;
+
+    background: var(--color-primary);
+    color: #ffffff;
+
+    transition:
+      transform 250ms ease,
+      box-shadow 250ms ease,
+      opacity 250ms ease;
+  }
+
+  .menu-button::before {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+
+    content: "";
+
+    background: var(--color-on-primary-container);
+
+    transform: scaleX(0);
+    transform-origin: right;
+
+    transition: transform 300ms ease;
+  }
+
+  .menu-button:hover {
+    opacity: 1;
+    transform: translateY(-1px);
+    box-shadow: 0 8px 20px rgb(53 77 48 / 18%);
+  }
+
+  .menu-button:hover::before {
+    transform: scaleX(1);
+  }
+
+  .menu-button:active {
+    transform: translateY(0) scale(0.98);
+  }
+
+  /* =======================================================
+     SIDEBAR
+     ======================================================= */
+
+  .sidebar {
+    position: fixed;
+    top: 0;
+    right: 0;
+
+    z-index: 60;
+
+    width: 18rem;
+    max-height: 100vh;
+
+    overflow-y: auto;
+
+    border-left: 1px solid rgb(0 0 0 / 10%);
+    border-radius: 1rem 0 0 1rem;
+
+    background: rgb(255 255 255 / 70%);
+
+    padding: 1.5rem;
+
+    box-shadow: 0 25px 50px -12px rgb(0 0 0 / 25%);
+
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+
+    transform: translateX(100%);
+
+    visibility: hidden;
+    opacity: 0;
+
+    transition:
+      transform 350ms cubic-bezier(0.4, 0, 0.2, 1),
+      opacity 250ms ease,
+      visibility 350ms;
+  }
+
+  .sidebar-open {
+    transform: translateX(0);
+    visibility: visible;
+    opacity: 1;
+  }
+
+  /* =======================================================
+     SIDEBAR OVERLAY
+     ======================================================= */
+
+  .sidebar-overlay {
+    position: fixed;
+    inset: 0;
+
+    z-index: 55;
+
+    background: rgb(0 0 0 / 20%);
+
+    opacity: 0;
+    visibility: hidden;
+
+    transition:
+      opacity 300ms ease,
+      visibility 300ms ease;
+  }
+
+  .sidebar-overlay-open {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  /* =======================================================
+     NEWS TICKER
+     ======================================================= */
+
+  .ticker-container {
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  .ticker-text {
+    display: inline-block;
+    animation: ticker-start-center 25s linear infinite;
+  }
+
+  .ticker-container:hover .ticker-text {
+    animation-play-state: paused;
   }
 }
 
-#root {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
-  min-height: 100svh;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-}
+/* =========================================================
+   TICKER ANIMATION
+   ========================================================= */
 
-body {
-  margin: 0;
-}
+@keyframes ticker-start-center {
+  0% {
+    transform: translateX(50vw);
+  }
 
-h1,
-h2 {
-  font-family: var(--heading);
-  font-weight: 500;
-  color: var(--text-h);
-}
-
-h1 {
-  font-size: 56px;
-  letter-spacing: -1.68px;
-  margin: 32px 0;
-  @media (max-width: 1024px) {
-    font-size: 36px;
-    margin: 20px 0;
+  100% {
+    transform: translateX(-100%);
   }
 }
-h2 {
-  font-size: 24px;
-  line-height: 118%;
-  letter-spacing: -0.24px;
-  margin: 0 0 8px;
-  @media (max-width: 1024px) {
-    font-size: 20px;
+
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
   }
-}
-p {
-  margin: 0;
-}
 
-code,
-.counter {
-  font-family: var(--mono);
-  display: inline-flex;
-  border-radius: 4px;
-  color: var(--text-h);
-}
+  .ticker-text {
+    animation: none;
+  }
 
-code {
-  font-size: 15px;
-  line-height: 135%;
-  padding: 4px 8px;
-  background: var(--code-bg);
+  .sidebar,
+  .sidebar-overlay,
+  .sidebar-link,
+  .menu-button {
+    transition: none;
+  }
 }

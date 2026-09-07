@@ -1,22 +1,40 @@
 import express from "express";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 import "dotenv/config";
 
 import fs from "node:fs";
 import path from "node:path";
 
-import {getEnv} from "./lib/env"
-import keepAliveCorn from "./lib/cron"
+import { getEnv } from "./lib/env";
+import keepAliveCorn from "./lib/cron";
 
-const env = getEnv()
+import professorRouter from "./routes/professorRouter";
+import adminAuthRouter from "./routes/adminAuthRouter";
+import galleryRouter from "./routes/galleryRouter";
+
+
+const env = getEnv();
 
 const app = express();
-app.use(express.json());
-app.use(cors());
 
-app.get("/health",(_req,res)=>{
-  res.json({status:"ok"})
-})
+app.use(
+  cors({
+    origin: env.FRONTEND_URL,
+    credentials: true,
+  }),
+);
+
+app.use(express.json());
+
+app.use(cookieParser());
+
+app.get("/health", (_req, res) => {
+  res.json({ status: "ok" });
+});
+app.use("/api/admin", adminAuthRouter);// Admin authentication
+app.use("/api/professors", professorRouter);// Protected professor administration
+app.use("/api/gallery", galleryRouter);
 
 const publicDir = path.join(process.cwd(), "public");
 //cwd is current working directory &
@@ -47,10 +65,11 @@ if (fs.existsSync(publicDir)) {
   });
 }
 
-app.listen( env.PORT , () => {
+
+app.listen(env.PORT, () => {
   console.log(`Server is running on port ${env.PORT}`);
 
-  if(env.NODE_ENV === "production"){
-    keepAliveCorn.start()
+  if (env.NODE_ENV === "production") {
+    keepAliveCorn.start();
   }
 });

@@ -12,6 +12,12 @@ const envSchema = z.object({
 
   //   FRONTEND_URL: z.string().url(),
   FRONTEND_URL: z.url(),
+
+  JWT_SECRET: z.string().min(32),
+
+  FACEBOOK_PAGE_ID: z.string().min(1),
+
+  FACEBOOK_PAGE_ACCESS_TOKEN: z.string().min(1),
 });
 
 export type Env = z.infer<typeof envSchema>;
@@ -25,6 +31,7 @@ export function loadEnv() {
     console.error(errors);
 
     throw new Error("Invalid environment variables");
+
   }
 
   return parsed.data;

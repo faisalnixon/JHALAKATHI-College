@@ -29,3 +29,26 @@ export const professors = pgTable("professors", {
   createdAt: timestamp("created_at", { withTimezone: true, }).defaultNow().notNull(),
   updatedAt: timestamp("updated_at", { withTimezone: true, }).defaultNow().notNull(),
 });
+
+
+
+
+export const adminUsers = pgTable("admin_users", {
+  id: uuid("id").defaultRandom().primaryKey(),
+
+  email: text("email").notNull().unique(),
+
+  passwordHash: text("password_hash").notNull(),
+
+  createdAt: timestamp("created_at", {
+    withTimezone: true,
+  })
+    .defaultNow()
+    .notNull(),
+
+  updatedAt: timestamp("updated_at", {
+    withTimezone: true,
+  })
+    .defaultNow()
+    .notNull(),
+});
