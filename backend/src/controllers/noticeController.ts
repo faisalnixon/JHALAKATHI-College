@@ -11,9 +11,9 @@ const noticeCreateSchema = z.object({
 
 const noticeUpdateSchema = noticeCreateSchema.partial();
 
-function getNoticeId(id: string) {
-  return z.uuid().parse(id);
-}
+// function getNoticeId(id: string) {
+//   return z.uuid().parse(id);
+// }
 
 /* -------------------------------------------------------------------------- */
 /* GET ALL NOTICES                                                            */
@@ -87,6 +87,7 @@ export async function updateNotice(
   next: NextFunction,
 ) {
   try {
+    
     const idResult = z.uuid().safeParse(req.params.id);
 
     if (!idResult.success) {
