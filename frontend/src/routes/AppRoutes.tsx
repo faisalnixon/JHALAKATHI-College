@@ -13,6 +13,8 @@ import OfficialsPage from "../pages/OfficialsPage";
 import AdmissionPage from "../pages/AdmissionPage";
 import GeneralPage from "../pages/GeneralPage";
 import ExamNoticePage from "../pages/ExamNoticePage";
+import ProfessorsPage from "../pages/ProfessorsPage";
+import EmployeesPage from "../pages/EmployeesPage";
 
 function AppRoutes() {
   return (
@@ -29,6 +31,9 @@ function AppRoutes() {
         <Route path="/notice/general" element={<GeneralPage />} />
         <Route path="/gallery" element={<GalleryPage />} />
         <Route path="*" element={<NotFoundPage />} />
+
+        <Route path="/professors" element={<ProfessorsPage />} />
+        <Route path="/employees" element={<EmployeesPage />} />
       </Route>
 
       {/* Admin login — no public Header/Footer */}
@@ -36,10 +41,7 @@ function AppRoutes() {
 
       {/* Protected admin */}
       <Route element={<ProtectedAdminRoute />}>
-        <Route
-          path="/admin/dashboard"
-          element={<AdminDashboardPage />}
-        />
+        <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
       </Route>
     </Routes>
   );

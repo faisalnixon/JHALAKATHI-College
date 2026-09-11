@@ -1,8 +1,4 @@
-import type {
-  Request,
-  Response,
-  NextFunction,
-} from "express";
+import type { Request, Response, NextFunction } from "express";
 
 import { db } from "../db";
 import { professors } from "../db/schema";
@@ -14,38 +10,22 @@ import { z } from "zod";
 /*                              VALIDATION                                    */
 /* -------------------------------------------------------------------------- */
 
-const optionalText = z
-  .string()
-  .optional()
-  .nullable();
+const optionalText = z.string().optional().nullable();
 
 const optionalEmail = z
-  .union([
-    z.email(),
-    z.literal(""),
-  ])
+  .union([z.email(), z.literal("")])
   .optional()
   .nullable();
 
 const optionalImageUrl = z
-  .union([
-    z.url(),
-    z.literal(""),
-  ])
+  .union([z.url(), z.literal("")])
   .optional()
   .nullable();
 
 const professorCreate = z.object({
-  name: z
-    .string()
-    .trim()
-    .min(1, "Name is required"),
+  name: z.string().trim().min(1, "Name is required"),
 
-  designation: z.enum([
-    "Professor",
-    "Assistant Professor",
-    "Lecturer",
-  ]),
+  designation: z.enum(["Professor", "Assistant Professor", "Lecturer","Exhibitor",]),
 
   imageUrl: optionalImageUrl,
 
@@ -53,15 +33,10 @@ const professorCreate = z.object({
 
   email: optionalEmail,
 
-  gender: z.enum([
-    "Male",
-    "Female",
-    "Other",
-  ]),
+  gender: z.enum(["Male", "Female", "Other"]),
 });
 
-const professorPatch =
-  professorCreate.partial();
+const professorPatch = professorCreate.partial();
 
 const professorIdSchema = z.uuid();
 
@@ -69,12 +44,8 @@ const professorIdSchema = z.uuid();
 /*                         BUILD UPDATE DATA                                  */
 /* -------------------------------------------------------------------------- */
 
-function buildProfessorUpdateSet(
-  body: z.infer<typeof professorPatch>,
-) {
-  const data: Partial<
-    typeof professors.$inferInsert
-  > = {};
+function buildProfessorUpdateSet(body: z.infer<typeof professorPatch>) {
+  const data: Partial<typeof professors.$inferInsert> = {};
 
   if (body.name !== undefined) {
     data.name = body.name;
@@ -85,18 +56,15 @@ function buildProfessorUpdateSet(
   }
 
   if (body.imageUrl !== undefined) {
-    data.imageUrl =
-      body.imageUrl || null;
+    data.imageUrl = body.imageUrl || null;
   }
 
   if (body.phoneNo !== undefined) {
-    data.phoneNo =
-      body.phoneNo || null;
+    data.phoneNo = body.phoneNo || null;
   }
 
   if (body.email !== undefined) {
-    data.email =
-      body.email || null;
+    data.email = body.email || null;
   }
 
   if (body.gender !== undefined) {
@@ -119,9 +87,7 @@ export async function listAdminProfessors(
     const rows = await db
       .select()
       .from(professors)
-      .orderBy(
-        desc(professors.createdAt),
-      );
+      .orderBy(desc(professors.createdAt));
 
     res.json({
       professors: rows,
@@ -141,26 +107,18 @@ export async function createAdminProfessor(
   next: NextFunction,
 ) {
   try {
-    const parsed =
-      professorCreate.safeParse(req.body);
+    const parsed = professorCreate.safeParse(req.body);
 
     if (!parsed.success) {
       res.status(400).json({
         error: "Invalid body",
-        details: z.treeifyError(
-          parsed.error,
-        ),
+        details: z.treeifyError(parsed.error),
       });
 
       return;
     }
 
-    const {
-      imageUrl,
-      phoneNo,
-      email,
-      ...rest
-    } = parsed.data;
+    const { imageUrl, phoneNo, email, ...rest } = parsed.data;
 
     const [row] = await db
       .insert(professors)
@@ -172,9 +130,7 @@ export async function createAdminProfessor(
       })
       .returning();
 
-    res.status(201).json({
-      professor: row,
-    });
+    res.status(201).json({ professor: row });
   } catch (error) {
     next(error);
   }
@@ -190,10 +146,7 @@ export async function updateAdminProfessor(
   next: NextFunction,
 ) {
   try {
-    const idResult =
-      professorIdSchema.safeParse(
-        req.params.id,
-      );
+    const idResult = professorIdSchema.safeParse(req.params.id);
 
     if (!idResult.success) {
       res.status(400).json({
@@ -203,28 +156,20 @@ export async function updateAdminProfessor(
       return;
     }
 
-    const parsed =
-      professorPatch.safeParse(req.body);
+    const parsed = professorPatch.safeParse(req.body);
 
     if (!parsed.success) {
       res.status(400).json({
         error: "Invalid body",
-        details: z.treeifyError(
-          parsed.error,
-        ),
+        details: z.treeifyError(parsed.error),
       });
 
       return;
     }
 
-    const data =
-      buildProfessorUpdateSet(
-        parsed.data,
-      );
+    const data = buildProfessorUpdateSet(parsed.data);
 
-    if (
-      Object.keys(data).length === 0
-    ) {
+    if (Object.keys(data).length === 0) {
       res.status(400).json({
         error: "No fields to update",
       });
@@ -238,12 +183,7 @@ export async function updateAdminProfessor(
         ...data,
         updatedAt: new Date(),
       })
-      .where(
-        eq(
-          professors.id,
-          idResult.data,
-        ),
-      )
+      .where(eq(professors.id, idResult.data))
       .returning();
 
     if (!row) {
@@ -272,10 +212,7 @@ export async function deleteAdminProfessor(
   next: NextFunction,
 ) {
   try {
-    const idResult =
-      professorIdSchema.safeParse(
-        req.params.id,
-      );
+    const idResult = professorIdSchema.safeParse(req.params.id);
 
     if (!idResult.success) {
       res.status(400).json({
@@ -287,12 +224,7 @@ export async function deleteAdminProfessor(
 
     const [deleted] = await db
       .delete(professors)
-      .where(
-        eq(
-          professors.id,
-          idResult.data,
-        ),
-      )
+      .where(eq(professors.id, idResult.data))
       .returning({
         id: professors.id,
       });
@@ -313,221 +245,3 @@ export async function deleteAdminProfessor(
     next(error);
   }
 }
-
-
-
-
-
-
-
-
-
-
-// import type { Request, Response, NextFunction } from "express";
-// import { db } from "../db";
-// import { professors } from "../db/schema";
-// import { desc, eq } from "drizzle-orm";
-// import { z } from "zod";
-
-// /* -------------------------------------------------------------------------- */
-// /*                           PROFESSOR VALIDATION                             */
-// /* -------------------------------------------------------------------------- */
-
-// const professorCreate = z.object({
-//   name: z.string().min(1),
-//   designation: z.enum(["Professor", "Assistant Professor", "Lecturer"]),
-//   imageUrl: z
-//     .union([z.url(), z.literal("")])
-//     .optional()
-//     .nullable(),
-//   phoneNo: z.string().min(1).optional().nullable(),
-//   email: z.email().optional().nullable(),
-//   gender: z.enum(["Male", "Female", "Other"]),
-// });
-
-// const professorPatch = professorCreate.partial();
-
-// /* -------------------------------------------------------------------------- */
-// /*                       BUILD PROFESSOR UPDATE DATA                          */
-// /* -------------------------------------------------------------------------- */
-
-// function buildProfessorUpdateSet(body: z.infer<typeof professorPatch>) {
-//   const data: Partial<typeof professors.$inferInsert> = {};
-
-//   if (body.name !== undefined) {
-//     data.name = body.name;
-//   }
-
-//   if (body.designation !== undefined) {
-//     data.designation = body.designation;
-//   }
-
-//   if (body.imageUrl !== undefined) {
-//     data.imageUrl = body.imageUrl === "" ? null : body.imageUrl;
-//   }
-
-//   if (body.phoneNo !== undefined) {
-//     data.phoneNo = body.phoneNo === "" ? null : body.phoneNo;
-//   }
-
-//   if (body.email !== undefined) {
-//     data.email = body.email === "" ? null : body.email;
-//   }
-
-//   if (body.gender !== undefined) {
-//     data.gender = body.gender;
-//   }
-
-//   return data;
-// }
-
-// /* -------------------------------------------------------------------------- */
-// /*                         LIST ADMIN PROFESSORS                              */
-// /* -------------------------------------------------------------------------- */
-
-// export async function listAdminProfessors(
-//   _req: Request,
-//   res: Response,
-//   next: NextFunction,
-// ) {
-//   try {
-//     const rows = await db
-//       .select()
-//       .from(professors)
-//       .orderBy(desc(professors.createdAt));
-
-//     res.json({
-//       professors: rows,
-//     });
-//   } catch (e) {
-//     next(e);
-//   }
-// }
-
-// /* -------------------------------------------------------------------------- */
-// /*                         CREATE ADMIN PROFESSOR                             */
-// /* -------------------------------------------------------------------------- */
-
-// export async function createAdminProfessor(
-//   req: Request,
-//   res: Response,
-//   next: NextFunction,
-// ) {
-//   try {
-//     const parsed = professorCreate.safeParse(req.body);
-
-//     if (!parsed.success) {
-//       res.status(400).json({
-//         error: "Invalid body",
-//         details: z.treeifyError(parsed.error),
-//       });
-//       return;
-//     }
-
-//     const { imageUrl, phoneNo, email, ...rest } = parsed.data;
-
-//     const [row] = await db
-//       .insert(professors)
-//       .values({
-//         ...rest,
-//         imageUrl: imageUrl || null,
-//         phoneNo: phoneNo || null,
-//         email: email || null,
-//       })
-//       .returning();
-
-//     res.status(201).json({
-//       professor: row,
-//     });
-//   } catch (e) {
-//     next(e);
-//   }
-// }
-
-// /* -------------------------------------------------------------------------- */
-// /*                         UPDATE ADMIN PROFESSOR                             */
-// /* -------------------------------------------------------------------------- */
-
-// export async function updateAdminProfessor(
-//   req: Request,
-//   res: Response,
-//   next: NextFunction,
-// ) {
-//   try {
-//     const parsed = professorPatch.safeParse(req.body);
-
-//     if (!parsed.success) {
-//       res.status(400).json({
-//         error: "Invalid body",
-//         details: z.treeifyError(parsed.error),
-//       });
-//       return;
-//     }
-
-//     const data = buildProfessorUpdateSet(parsed.data);
-
-//     if (Object.keys(data).length === 0) {
-//       res.status(400).json({
-//         error: "No fields to update",
-//       });
-//       return;
-//     }
-
-//     const [row] = await db
-//       .update(professors)
-//       .set({
-//         ...data,
-//         updatedAt: new Date(),
-//       })
-//       .where(eq(professors.id, req.params.id as string))
-//       .returning();
-
-//     if (!row) {
-//       res.status(404).json({
-//         error: "Not found",
-//       });
-//       return;
-//     }
-
-//     res.json({
-//       professor: row,
-//     });
-//   } catch (e) {
-//     next(e);
-//   }
-// }
-
-// /* -------------------------------------------------------------------------- */
-// /*                         DELETE ADMIN PROFESSOR                             */
-// /* -------------------------------------------------------------------------- */
-
-// export async function deleteAdminProfessor(
-//   req: Request,
-//   res: Response,
-//   next: NextFunction,
-// ) {
-//   try {
-//     const id = req.params.id as string;
-
-//     const [existing] = await db
-//       .select()
-//       .from(professors)
-//       .where(eq(professors.id, id))
-//       .limit(1);
-
-//     if (!existing) {
-//       res.status(404).json({
-//         error: "Not found",
-//       });
-//       return;
-//     }
-
-//     await db.delete(professors).where(eq(professors.id, id));
-
-//     res.json({
-//       ok: true,
-//     });
-//   } catch (e) {
-//     next(e);
-//   }
-// }

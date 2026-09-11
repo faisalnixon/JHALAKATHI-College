@@ -60,6 +60,8 @@
   --color-notice-red: #d32f2f;
   --color-alert-amber: #fbc02d;
 
+  --color-formBg: #e8e7e3;
+
   /* ---------- Typography ---------- */
 
   --font-family-label-md: "Manrope", sans-serif;
@@ -79,7 +81,6 @@
 
   --text-body-md: 16px;
   --text-body-md--line-height: 24px;
-  
 
   --text-body-sm: 14px;
   --text-body-sm--line-height: 23px;
@@ -99,7 +100,7 @@
   --text-headline-lg-mobile: 28px;
   --text-headline-lg-mobile--line-height: 36px;
 
-  --text-display-sm: 30px;
+  --text-display-sm: 25px;
   --text-display-lg: 48px;
   --text-display-lg--line-height: 56px;
 }
@@ -171,7 +172,7 @@
   --font-heading: "Source Serif 4", serif;
   --font-sans: "Manrope", sans-serif;
 
-  --color-background: var(--background);
+  /* --color-background: var(--background); */
   --color-foreground: var(--foreground);
 
   --color-card: var(--card);
@@ -180,10 +181,10 @@
   --color-popover: var(--popover);
   --color-popover-foreground: var(--popover-foreground);
 
-  --color-primary: var(--primary);
+  /* --color-primary: var(--primary); */
   --color-primary-foreground: var(--primary-foreground);
 
-  --color-secondary: var(--secondary);
+  /* --color-secondary: var(--secondary); */
   --color-secondary-foreground: var(--secondary-foreground);
 
   --color-muted: var(--muted);
@@ -303,6 +304,13 @@
 
   /* =======================================================
      MENU BUTTON
+
+     Base state is a light background with a green border, icon and
+     text — always visible at a glance, rather than only becoming
+     legible once the hover fill kicks in. Hovering/clicking slides a
+     green fill in from the right (same mechanic as before, just
+     re-colored) and flips the icon/text to white for contrast; the
+     Menu icon itself gets a bouncy rotate+scale via .menu-icon.
      ======================================================= */
 
   .menu-button {
@@ -311,10 +319,12 @@
     overflow: hidden;
     isolation: isolate;
 
-    background: var(--color-primary);
-    color: #ffffff;
+    background: var(--color-surface-container-lowest);
+    color: var(--color-primary);
+    border: 2px solid var(--color-primary);
 
     transition:
+      color 250ms ease,
       transform 250ms ease,
       box-shadow 250ms ease,
       opacity 250ms ease;
@@ -327,7 +337,7 @@
 
     content: "";
 
-    background: var(--color-on-primary-container);
+    background: var(--color-primary);
 
     transform: scaleX(0);
     transform-origin: right;
@@ -335,18 +345,34 @@
     transition: transform 300ms ease;
   }
 
-  .menu-button:hover {
+  .menu-button:hover,
+  .menu-button:focus-visible {
+    color: #ffffff;
     opacity: 1;
     transform: translateY(-1px);
     box-shadow: 0 8px 20px rgb(53 77 48 / 18%);
   }
 
-  .menu-button:hover::before {
+  .menu-button:hover::before,
+  .menu-button:focus-visible::before {
     transform: scaleX(1);
   }
 
   .menu-button:active {
-    transform: translateY(0) scale(0.98);
+    transform: translateY(0) scale(0.96);
+  }
+
+  .menu-button .menu-icon {
+    transition: transform 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .menu-button:hover .menu-icon,
+  .menu-button:focus-visible .menu-icon {
+    transform: rotate(180deg) scale(1.15);
+  }
+
+  .menu-button:active .menu-icon {
+    transform: rotate(180deg) scale(0.9);
   }
 
   /* =======================================================
@@ -418,58 +444,101 @@
     opacity: 1;
     visibility: visible;
   }
-
-  /* =======================================================
-     NEWS TICKER
-     ======================================================= */
-
-  .ticker-container {
-    width: 100%;
-    overflow: hidden;
-    white-space: nowrap;
-  }
-
-  .ticker-text {
-    display: inline-block;
-    animation: ticker-start-center 25s linear infinite;
-  }
-
-  .ticker-container:hover .ticker-text {
-    animation-play-state: paused;
-  }
 }
 
+/* =========================================================
+   NEWS TICKER
+   Right → Left continuous marquee
+   ========================================================= */
+.ticker-container {
+  min-width: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.ticker-track {
+  display: inline-flex;
+  align-items: center;
+  width: max-content;
+  min-width: max-content;
+  height: 100%;
+  animation: ticker-right-to-left 5s linear infinite;
+  will-change: transform;
+}
+
+.ticker-text {
+  display: inline-block;
+  padding-right: 4rem;
+  color: #ffffff;
+  font-family: "Manrope", sans-serif;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.ticker-container:hover .ticker-track {
+  animation-play-state: paused;
+}
 /* =========================================================
    TICKER ANIMATION
+   Always moves RIGHT → LEFT
    ========================================================= */
 
-@keyframes ticker-start-center {
-  0% {
-    transform: translateX(50vw);
+
+@keyframes ticker-right-to-left {
+  from {
+    transform: translateX(0);
   }
 
-  100% {
-    transform: translateX(-100%);
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ticker-track {
+    animation: none;
   }
 }
 
 /* =========================================================
-   REDUCED MOTION
+   TOP TICKER NOTICE POPUP
    ========================================================= */
+
+@keyframes notice-slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
 
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
   }
 
-  .ticker-text {
+  .ticker-track {
     animation: none;
   }
 
   .sidebar,
-  .sidebar-overlay,
-  .sidebar-link,
-  .menu-button {
+  .sidebar-overlay {
     transition: none;
   }
 }
+
+
+
+
+
+
+
+

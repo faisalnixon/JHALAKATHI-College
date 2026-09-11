@@ -9,29 +9,31 @@ interface RippleSliderPhoto {
 
 interface RippleImageSliderProps {
   images: RippleSliderPhoto[];
-  // Which photo to open on. Defaults to the first photo. Out-of-range
-  // values are clamped so a stale index never crashes the slider.
   initialIndex?: number;
-  onClose: () => void;
+  onClose?: () => void;
+  // When true (default) this renders as a fullscreen modal, same as before.
+  // When false, it renders inline inside its parent container — the
+  // parent controls width/height, no bg-black overlay, no scroll lock,
+  // and no close button.
+  fullscreen?: boolean;
+  // Auto-advance to the next photo after `autoPlayDelay` ms of inactivity.
+  autoPlay?: boolean;
+  autoPlayDelay?: number;
+  // Extra classes for the outer wrapper — only meaningful when
+  // fullscreen={false}, since fullscreen mode is always inset-0.
+  className?: string;
 }
 
-// Number of concentric rings fanning out from each edge — matches the
-// 9-circle groups (circle1..9 / circle10..18) in the original markup.
 const CIRCLES_PER_SIDE = 9;
 
-/**
- * Fullscreen "ripple wipe" image slider.
- *
- * This is a React/Tailwind port of the CodePen-style ripple slider: instead
- * of a hard-coded 681x384 stage with 4 fixed slides, the stage fills the
- * whole viewport and the ripple geometry (circle radii, edge positions) is
- * recalculated from the container's real size, so it scales cleanly across
- * mobile, tablet and desktop.
- */
 function RippleImageSlider({
   images,
   initialIndex = 0,
   onClose,
+  fullscreen = true,
+  autoPlay = false,
+  autoPlayDelay = 5000,
+  className = "",
 }: RippleImageSliderProps) {
   const stageRef = useRef<HTMLDivElement>(null);
   const [size, setSize] = useState({ width: 0, height: 0 });
@@ -49,9 +51,6 @@ function RippleImageSlider({
 
   const timeouts = useRef<number[]>([]);
 
-  // Keep the ripple geometry in sync with the actual stage size so the
-  // circles always start exactly at the edges and fully cover the screen,
-  // on any device / orientation.
   useEffect(() => {
     const el = stageRef.current;
     if (!el) return;
@@ -79,14 +78,15 @@ function RippleImageSlider({
     };
   }, []);
 
-  // Lock background scroll while the slider is open.
+  // Lock background scroll only for the fullscreen modal variant.
   useEffect(() => {
+    if (!fullscreen) return;
     const original = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     return () => {
       document.body.style.overflow = original;
     };
-  }, []);
+  }, [fullscreen]);
 
   const goTo = useCallback(
     (direction: "next" | "prev") => {
@@ -95,8 +95,6 @@ function RippleImageSlider({
       setCanClick(false);
       setScaling(true);
 
-      // "next" ripples in from the right edge, "prev" from the left —
-      // same mapping as rightSlide()/leftSlide() in the original script.
       const side = direction === "next" ? "right" : "left";
       setActiveSide(side);
 
@@ -105,10 +103,6 @@ function RippleImageSlider({
           ? (current + 1) % images.length
           : (current - 1 + images.length) % images.length;
 
-      // Timings mirror the original: move() fires 200ms after click, the
-      // slide swap happens 600ms into move(), the rings retract 850ms
-      // into move(), the zoom class drops at 1400ms, and clicking is
-      // re-enabled 1700ms into move().
       const t1 = window.setTimeout(() => setStreaking(true), 200);
       const t2 = window.setTimeout(() => setCurrent(nextIndex), 200 + 600);
       const t3 = window.setTimeout(() => setStreaking(false), 200 + 850);
@@ -120,21 +114,34 @@ function RippleImageSlider({
     [canClick, current, images.length],
   );
 
+  // Auto-advance after `autoPlayDelay` ms with no slide change. Any manual
+  // prev/next click changes `current` (after its own animation), which
+  // restarts this timer — so it's really "N seconds of inactivity".
+  useEffect(() => {
+    if (!autoPlay || images.length < 2) return;
+
+    const timer = window.setTimeout(() => {
+      goTo("next");
+    }, autoPlayDelay);
+
+    return () => window.clearTimeout(timer);
+  }, [current, autoPlay, autoPlayDelay, goTo]);
+
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
       if (event.key === "ArrowRight") goTo("next");
       else if (event.key === "ArrowLeft") goTo("prev");
-      else if (event.key === "Escape") onClose();
+      else if (event.key === "Escape" && fullscreen) onClose?.();
     }
 
     document.addEventListener("keydown", onKeyDown);
     return () => document.removeEventListener("keydown", onKeyDown);
-  }, [goTo, onClose]);
+  }, [goTo, onClose, fullscreen]);
 
   const { width, height } = size;
   const diagonal = Math.hypot(width, height) || 1;
   const step = diagonal / CIRCLES_PER_SIDE;
-  const strokeWidth = step * 1.2; // slight overlap so rings tile with no gaps
+  const strokeWidth = step * 1.2;
 
   const leftCx = width * 0.05;
   const rightCx = width * 0.95;
@@ -172,53 +179,51 @@ function RippleImageSlider({
 
   if (images.length === 0) return null;
 
-  return (
-    <div className="fixed inset-0 z-100 flex items-center justify-center bg-black">
-      {/* Close button */}
-      <button
-        type="button"
-        onClick={onClose}
-        aria-label="Close image slider"
-        className="
-          fixed
-          right-3
-          top-3
-          z-110
-          flex
-          size-10
-          items-center
-          justify-center
-          rounded-full
-          bg-white/90
-          text-black
-          shadow-lg
-          transition-colors
-          hover:bg-white
-          active:scale-95
-          sm:right-5
-          sm:top-5
-          sm:size-11
-        "
-      >
-        <X className="size-5 sm:size-6" strokeWidth={2.5} />
-      </button>
+  // const wrapperClass = fullscreen
+  //   ? "fixed inset-0 z-100 flex items-center justify-center bg-black"
+  //   : `relative overflow-hidden ${className}`;
 
-      {/* Stage — fills the whole viewport on every breakpoint */}
-      <div
-        ref={stageRef}
-        className="relative h-dvh w-screen overflow-hidden bg-black"
-      >
+  const wrapperClass = fullscreen
+  ? "fixed inset-0 z-100 flex items-center justify-center bg-black"
+  : `relative h-full w-full overflow-hidden ${className}`;
+
+  const stageClass = fullscreen
+    ? "relative h-dvh w-screen overflow-hidden bg-black"
+    : "relative h-full w-full overflow-hidden bg-black";
+
+  return (
+    <div className={wrapperClass}>
+      {fullscreen && (
+        <button
+          type="button"
+          onClick={onClose}
+          aria-label="Close image slider"
+          className="fixed right-3 top-3 z-110 flex size-10 items-center justify-center rounded-full bg-white/90 text-black shadow-lg transition-colors hover:bg-white active:scale-95 sm:right-5 sm:top-5 sm:size-11"
+        >
+          <X className="size-5 sm:size-6" strokeWidth={2.5} />
+        </button>
+      )}
+
+      <div ref={stageRef} className={stageClass}>
         {images.map((photo, index) => (
           <img
             key={photo.id}
             src={photo.url}
             alt={photo.alt}
+            // className={`
+            //   absolute inset-0 h-full w-full object-contain
+            //   transition-transform duration-1400 ease-out
+            //   ${index === current ? "z-20 opacity-100" : "z-10 opacity-0"}
+            //   ${scaling ? "scale-110" : "scale-100"}
+            // `}
+
+
             className={`
-              absolute inset-0 h-full w-full object-contain
-              transition-transform duration-1400 ease-out
-              ${index === current ? "z-20 opacity-100" : "z-10 opacity-0"}
-              ${scaling ? "scale-110" : "scale-100"}
-            `}
+  absolute inset-0 h-full w-full ${fullscreen ? "object-contain" : "object-cover"}
+  transition-transform duration-1400 ease-out
+  ${index === current ? "z-20 opacity-100" : "z-10 opacity-0"}
+  ${scaling ? "scale-110" : "scale-100"}
+`}
           />
         ))}
 
@@ -235,31 +240,7 @@ function RippleImageSlider({
               type="button"
               onClick={() => goTo("prev")}
               aria-label="Previous image"
-              className="
-                absolute
-                left-2
-                top-1/2
-                z-50
-                flex
-                size-10
-                -translate-y-1/2
-                items-center
-                justify-center
-                rounded-full
-                border
-                border-white/40
-                bg-white/10
-                text-white
-                backdrop-blur-sm
-                transition-colors
-                hover:bg-white/90
-                hover:text-black
-                active:scale-95
-                sm:left-4
-                sm:size-12
-                md:left-6
-                md:size-14
-              "
+              className="absolute left-2 top-1/2 z-50 flex size-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/40 bg-white/10 text-white backdrop-blur-sm transition-colors hover:bg-white/90 hover:text-black active:scale-95 sm:left-4 sm:size-12 md:left-6 md:size-14"
             >
               <ChevronLeft className="size-5 sm:size-6 md:size-7" />
             </button>
@@ -268,31 +249,7 @@ function RippleImageSlider({
               type="button"
               onClick={() => goTo("next")}
               aria-label="Next image"
-              className="
-                absolute
-                right-2
-                top-1/2
-                z-50
-                flex
-                size-10
-                -translate-y-1/2
-                items-center
-                justify-center
-                rounded-full
-                border
-                border-white/40
-                bg-white/10
-                text-white
-                backdrop-blur-sm
-                transition-colors
-                hover:bg-white/90
-                hover:text-black
-                active:scale-95
-                sm:right-4
-                sm:size-12
-                md:right-6
-                md:size-14
-              "
+              className="absolute right-2 top-1/2 z-50 flex size-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/40 bg-white/10 text-white backdrop-blur-sm transition-colors hover:bg-white/90 hover:text-black active:scale-95 sm:right-4 sm:size-12 md:right-6 md:size-14"
             >
               <ChevronRight className="size-5 sm:size-6 md:size-7" />
             </button>
@@ -300,23 +257,7 @@ function RippleImageSlider({
         )}
 
         {images.length > 1 && (
-          <div
-            className="
-              absolute
-              bottom-3
-              left-1/2
-              z-50
-              -translate-x-1/2
-              rounded-full
-              bg-black/50
-              px-3
-              py-1
-              text-xs
-              text-white
-              sm:bottom-5
-              sm:text-sm
-            "
-          >
+          <div className="absolute bottom-3 left-1/2 z-50 -translate-x-1/2 rounded-full bg-black/50 px-3 py-1 text-xs text-white sm:bottom-5 sm:text-sm">
             {current + 1} / {images.length}
           </div>
         )}
@@ -326,13 +267,6 @@ function RippleImageSlider({
 }
 
 export default RippleImageSlider;
-
-
-
-
-
-
-
 
 
 
@@ -350,6 +284,9 @@ export default RippleImageSlider;
 
 // interface RippleImageSliderProps {
 //   images: RippleSliderPhoto[];
+//   // Which photo to open on. Defaults to the first photo. Out-of-range
+//   // values are clamped so a stale index never crashes the slider.
+//   initialIndex?: number;
 //   onClose: () => void;
 // }
 
@@ -366,11 +303,20 @@ export default RippleImageSlider;
 //  * recalculated from the container's real size, so it scales cleanly across
 //  * mobile, tablet and desktop.
 //  */
-// function RippleImageSlider({ images, onClose }: RippleImageSliderProps) {
+// function RippleImageSlider({
+//   images,
+//   initialIndex = 0,
+//   onClose,
+// }: RippleImageSliderProps) {
 //   const stageRef = useRef<HTMLDivElement>(null);
 //   const [size, setSize] = useState({ width: 0, height: 0 });
 
-//   const [current, setCurrent] = useState(0);
+//   const clampedInitialIndex = Math.min(
+//     Math.max(initialIndex, 0),
+//     Math.max(images.length - 1, 0),
+//   );
+
+//   const [current, setCurrent] = useState(clampedInitialIndex);
 //   const [canClick, setCanClick] = useState(true);
 //   const [activeSide, setActiveSide] = useState<"left" | "right" | null>(null);
 //   const [streaking, setStreaking] = useState(false);
@@ -630,21 +576,7 @@ export default RippleImageSlider;
 
 //         {images.length > 1 && (
 //           <div
-//             className="
-//               absolute
-//               bottom-3
-//               left-1/2
-//               z-50
-//               -translate-x-1/2
-//               rounded-full
-//               bg-black/50
-//               px-3
-//               py-1
-//               text-xs
-//               text-white
-//               sm:bottom-5
-//               sm:text-sm
-//             "
+//             className=" absolute bottom-3 left-1/2 z-50 -translate-x-1/2 rounded-full bg-black/50 px-3 py-1 text-xs text-white sm:bottom-5 sm:text-sm "
 //           >
 //             {current + 1} / {images.length}
 //           </div>

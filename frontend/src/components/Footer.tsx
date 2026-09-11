@@ -1,4 +1,5 @@
 import collegeLogo from "../assets/Untitled design (1).png";
+import GovtComplianceLinks from "./GovtComplianceLinks";
 
 function Footer() {
   return (
@@ -6,6 +7,10 @@ function Footer() {
       id="contact"
       className="w-full border-t-4 border-primary bg-muted px-4 py-16 md:px-16"
     >
+      <div className="mx-auto mb-12 max-w-360">
+        <GovtComplianceLinks />
+      </div>
+      
       <div className="mx-auto flex max-w-360 flex-col gap-8 md:flex-row md:gap-6">
         <div className="flex w-full flex-col gap-4 md:w-[65%]">
           <div className="flex items-center gap-4">
@@ -27,12 +32,12 @@ function Footer() {
           </p>
         </div>
 
-        <div className="flex w-full flex-col gap-6 md:w-[35%]">
-          <h4 className="text-xl font-semibold text-primary">
+        <div className="flex w-full flex-col gap-2 md:w-[35%] ">
+          <h4 className="text-xl font-semibold text-primary  border-b-2 border-primary">
             যোগাযোগের তথ্য
           </h4>
 
-          <div className="flex flex-col gap-4 text-muted-foreground">
+          <div className="flex flex-col gap-1 text-muted-foreground">
             <p>ঝালকাঠি, বরিশাল বিভাগ, বাংলাদেশ</p>
             <p>০১৩০OTE১০৭০৮</p>
             <p>jgwcollege@yahoo.com</p>

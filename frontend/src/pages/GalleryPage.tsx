@@ -9,6 +9,7 @@ import {
   type CarouselApi,
 } from "../components/ui/carousel";
 import RippleImageSlider from "../components/Rippleimageslider";
+import { HeroPhotos } from "../lib/HeroPhotos";
 
 interface GalleryPhoto {
   id: string;
@@ -26,6 +27,19 @@ interface GalleryResponse {
   albums: GalleryAlbum[];
   cachedAt: string;
 }
+
+// export const heroPhotos = Object.entries(
+//   import.meta.glob<{ default: string }>(
+//     "../assets/college-pic/*.{jpg,jpeg,png,webp}",
+//     { eager: true },
+//   ),
+// )
+//   .sort(([a], [b]) => a.localeCompare(b))
+//   .map(([, mod], index) => ({
+//     id: `hero-${index}`,
+//     url: mod.default,
+//     alt: `Gallery highlight ${index + 1}`,
+//   }));
 
 function GalleryPage() {
   const [albums, setAlbums] = useState<GalleryAlbum[]>([]);
@@ -131,6 +145,17 @@ function GalleryPage() {
 
   return (
     <main className="container mx-auto px-3 py-8 sm:px-4 md:py-10">
+      <section className="mb-10 flex justify-center  px-1 py-4 border-4 border-primary/60 rounded-2xl  shadow-sm lg:w-[70%] lg:justify-self-center">
+        <div className="h-[75vh] lg:h-[80vh] w-[95%]  overflow-hidden border-2 border-primary/60 rounded-2xl ">
+          <RippleImageSlider
+            images={HeroPhotos}
+            fullscreen={false}
+            autoPlay
+            autoPlayDelay={5000}
+          />
+        </div>
+      </section>
+
       <section className="mx-auto w-full max-w-7xl">
         {/* Page heading */}
         <div className="mb-8 text-center md:mb-10">

@@ -8,7 +8,7 @@ function Layout() {
       <Header />
 
       <main className="flex-1">
-        <Outlet />
+        <Outlet /> {/* // this is where the nested routes will be rendered  like the Home, About, Contact pages, etc. The Outlet component is a placeholder that will render the matched child route component based on the current URL.  */}
       </main>
 
       <Footer />

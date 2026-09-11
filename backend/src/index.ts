@@ -12,6 +12,8 @@ import keepAliveCorn from "./lib/cron";
 import professorRouter from "./routes/professorRouter";
 import adminAuthRouter from "./routes/adminAuthRouter";
 import galleryRouter from "./routes/galleryRouter";
+import employeeRouter from "./routes/employeeRouter";
+import noticeRouter from "./routes/noticeRouter";
 
 
 const env = getEnv();
@@ -35,6 +37,8 @@ app.get("/health", (_req, res) => {
 app.use("/api/admin", adminAuthRouter);// Admin authentication
 app.use("/api/professors", professorRouter);// Protected professor administration
 app.use("/api/gallery", galleryRouter);
+app.use("/api/employees", employeeRouter);
+app.use("/api/notices", noticeRouter);
 
 const publicDir = path.join(process.cwd(), "public");
 //cwd is current working directory &

@@ -30,39 +30,3 @@ export default router;
 
 
 
-
-
-
-
-
-
-// import { Router } from "express";
-
-// import {
-//   listAdminProfessors,
-//   createAdminProfessor,
-//   updateAdminProfessor,
-//   deleteAdminProfessor,
-// } from "../controllers/professorController";
-
-// import { requireAdmin } from "../middleware/requireAdmin";
-
-// const router = Router();
-
-// // Get all professors
-// router.get("/", listAdminProfessors);
-
-
-// // Everything in this router requires admin authentication
-// router.use(requireAdmin);
-
-// // Create professor
-// router.post("/", createAdminProfessor);
-
-// // Update professor
-// router.patch("/:id", updateAdminProfessor);
-
-// // Delete professor
-// router.delete("/:id", deleteAdminProfessor);
-
-// export default router;
