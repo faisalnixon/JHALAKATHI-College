@@ -1,11 +1,10 @@
 import { useEffect } from "react";
-import { ChevronRight, X, Headset, MapPin, House } from "lucide-react";
+import { ChevronRight, X, Headset, MapPin } from "lucide-react";
 
 import {
   FaFacebookF,
   FaFacebookMessenger,
   FaWhatsapp,
-  FaYoutube,
   FaTelegramPlane,
   FaMailBulk
 } from "react-icons/fa";
