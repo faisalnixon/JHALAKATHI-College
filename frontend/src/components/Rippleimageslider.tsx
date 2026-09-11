@@ -21,7 +21,11 @@ interface RippleImageSliderProps {
   autoPlayDelay?: number;
   // Extra classes for the outer wrapper — only meaningful when
   // fullscreen={false}, since fullscreen mode is always inset-0.
-  className?: string;
+   className?: string;
+  // Show/hide the prev/next arrow buttons. Defaults to true. The
+  // counter pill and keyboard arrow-key navigation are unaffected —
+  // this only hides the on-screen buttons.
+  showControls?: boolean;
 }
 
 const CIRCLES_PER_SIDE = 9;
@@ -34,6 +38,7 @@ function RippleImageSlider({
   autoPlay = false,
   autoPlayDelay = 5000,
   className = "",
+  showControls = true,
 }: RippleImageSliderProps) {
   const stageRef = useRef<HTMLDivElement>(null);
   const [size, setSize] = useState({ width: 0, height: 0 });
@@ -234,7 +239,7 @@ function RippleImageSlider({
           </>
         )}
 
-        {images.length > 1 && (
+        {showControls && images.length > 1 && (
           <>
             <button
               type="button"

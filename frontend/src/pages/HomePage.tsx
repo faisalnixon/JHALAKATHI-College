@@ -160,6 +160,7 @@ function HomePage() {
                   fullscreen={false}
                   autoPlay
                   autoPlayDelay={5000}
+                  showControls={false}
                   className="transition-transform duration-700 group-hover:scale-105"
                 />
 
