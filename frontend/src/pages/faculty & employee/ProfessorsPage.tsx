@@ -1,0 +1,130 @@
+import DesignationDirectory from "../../components/DesignationDirectory";
+
+export default function ProfessorPage() {
+  return <DesignationDirectory title="Professor" designation="Professor" />;
+}
+
+
+
+
+
+
+
+
+// import { Link } from "react-router";
+// import FacultyCard from "../components/FacultyCard";
+// import PageLoader from "../components/PageLoader";
+// import { useProfessors } from "../hooks/useProfessors";
+
+// const sections = [
+//   {
+//     title: "Professor",
+//     designation: "Professor" as const,
+//   },
+//   {
+//     title: "Assistant Professor",
+//     designation: "Assistant Professor" as const,
+//   },
+//   {
+//     title: "Lecturer",
+//     designation: "Lecturer" as const,
+//   },
+//   {
+//     title: "Exhibitor",
+//     designation: "Exhibitor" as const,
+//   },
+// ];
+
+// export default function ProfessorsPage() {
+//   const { professorsQuery } = useProfessors();
+
+//   const professors = professorsQuery.data?.professors ?? [];
+
+//   return (
+//     <div className="mx-auto w-[96%] py-10 md:py-14">
+//       {/* Page heading */}
+//       <div className="mb-10 text-center md:mb-14">
+//         <h1 className="font-headline-lg text-headline-lg text-on-surface">
+//           Faculty Directory
+//         </h1>
+
+//         <p className="mx-auto mt-2 max-w-2xl font-body-md text-body-md text-on-surface-variant">
+//           Meet the dedicated faculty members of Jhalakathi Government Women's
+//           College.
+//         </p>
+//       </div>
+
+//       {professorsQuery.isError ? (
+//         <div className="rounded-2xl bg-surface-container-low p-8 text-center">
+//           <p className="font-medium text-destructive">
+//             Unable to load faculty information.
+//           </p>
+
+//           <button
+//             type="button"
+//             onClick={() => professorsQuery.refetch()}
+//             className="mt-4 rounded-lg bg-primary px-5 py-2 font-bold text-white transition-colors hover:bg-primary/90"
+//           >
+//             Try Again
+//           </button>
+//         </div>
+//       ) : (
+//         <div className="space-y-14 md:space-y-20">
+//           {sections.map((section) => {
+//             const sectionProfessors = professors.filter(
+//               (professor) => professor.designation === section.designation,
+//             );
+
+//             return (
+//               <section key={section.designation}>
+//                 <div className="mb-6 flex items-center justify-between border-b border-border pb-3">
+//                   <h2 className="font-headline-lg text-2xl font-bold text-on-surface md:text-3xl">
+//                     {section.title}
+//                   </h2>
+
+//                   {!professorsQuery.isLoading && (
+//                     <span className="rounded-full bg-primary/10 px-3 py-1 text-sm font-semibold text-primary">
+//                       {sectionProfessors.length}
+//                     </span>
+//                   )}
+//                 </div>
+
+//                 {professorsQuery.isLoading ? (
+//                   <PageLoader />
+//                 ) : sectionProfessors.length === 0 ? (
+//                   <div className="rounded-2xl bg-surface-container-low p-8 text-center">
+//                     <p className="text-sm text-on-surface-variant">
+//                       No faculty members found in this section.
+//                     </p>
+//                   </div>
+//                 ) : (
+//                   <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+//                     {sectionProfessors.map((professor) => (
+//                       <FacultyCard
+//                         key={professor.id}
+//                         name={professor.name}
+//                         designation={professor.designation}
+//                         imageUrl={professor.imageUrl}
+//                         email={professor.email}
+//                         phoneNo={professor.phoneNo}
+//                       />
+//                     ))}
+//                   </div>
+//                 )}
+//               </section>
+//             );
+//           })}
+//         </div>
+//       )}
+
+//       <div className="mt-12 text-center">
+//         <Link
+//           to="/"
+//           className="inline-flex rounded-lg border-2 border-primary px-6 py-2 font-bold text-primary transition-all hover:bg-primary hover:text-white"
+//         >
+//           Back to Home
+//         </Link>
+//       </div>
+//     </div>
+//   );
+// }

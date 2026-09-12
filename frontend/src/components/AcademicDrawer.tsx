@@ -123,8 +123,8 @@ function AcademicDrawer() {
               </p>
 
               <div className="flex flex-col gap-.75 text-sm md:text-[17px] text-[#442C00]  ">
-                <p>ঝালকাঠি, বরিশাল বিভাগ, বাংলাদেশ</p>
-                <p>০১৩০০০০০০০০</p>
+                <p>মহিলা কলেজ রোড, ঝালকাঠি সদর, ঝালকাঠি।</p>
+                <p>০১৭১৬৯৮৬২৭২</p>
                 <p>jgwcollege@yahoo.com</p>
               </div>
             </div>

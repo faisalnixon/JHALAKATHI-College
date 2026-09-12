@@ -1,8 +1,8 @@
 import { Link } from "react-router";
 
-import FacultyCard from "../components/FacultyCard";
-import PageLoader from "../components/PageLoader";
-import { useEmployees } from "../hooks/useEmployees";
+import FacultyCard from "../../components/FacultyCard";
+import PageLoader from "../../components/PageLoader";
+import { useEmployees } from "../../hooks/useEmployees";
 
 export default function EmployeesPage() {
   const { employeesQuery } = useEmployees();

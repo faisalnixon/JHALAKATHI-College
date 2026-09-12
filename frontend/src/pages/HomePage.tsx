@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
+import { UserRound, Droplet, Users, Trophy } from "lucide-react";
 
 import RippleImageSlider from "../components/Rippleimageslider";
 import HistoryWithPrincipleAndVicePrinciple from "../components/HistoryWithPrincipleAndVicePrinciple";
 import AnimatedStat from "../components/AnimatedStat";
 import { Link } from "react-router";
 import { useProfessors } from "../hooks/useProfessors";
-import { UserRound } from "lucide-react";
 import PageLoader from "../components/PageLoader";
 import TopTicker from "../components/TopTicker";
 import { HeroPhotos } from "../lib/HeroPhotos";
@@ -333,6 +333,63 @@ function HomePage() {
               ))}
             </div>
           )}
+        </section>
+
+
+        {/* <!-- CLUBS & ORGANIZATIONS SECTION */}
+        <section
+          id="notices"
+          className="mx-auto w-[95%] overflow-hidden rounded-xl border border-border-neutral bg-surface p-6 shadow-sm"
+        >
+          <div className="mb-6">
+            <h3 className="font-headline-lg text-headline-lg text-on-surface">
+              Clubs & Organizations
+            </h3>
+
+            <p className="font-body-md text-body-md text-on-surface-variant">
+              Student-led clubs building community, service, and skill.
+            </p>
+          </div>
+
+          <div className="rounded-3xl border-5 border-formBg bg-primary p-3 md:p-4">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+              <Link
+                to="/স্পন্দন"
+                className="group flex items-center gap-3 rounded-2xl bg-surface-container-lowest px-5 py-4 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md"
+              >
+                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-notice-red/10">
+                  <Droplet className="h-6 w-6 text-notice-red" fill="currentColor" />
+                </span>
+                <span className="font-label-md text-label-md font-bold text-on-surface">
+                  স্পন্দন
+                </span>
+              </Link>
+
+              <Link
+                to="/BNCC"
+                className="group flex items-center gap-3 rounded-2xl bg-surface-container-lowest px-5 py-4 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md"
+              >
+                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-primary/10">
+                  <Users className="h-6 w-6 text-primary" fill="currentColor" />
+                </span>
+                <span className="font-label-md text-label-md font-bold text-on-surface">
+                  BNCC
+                </span>
+              </Link>
+
+              <Link
+                to="/Sports Club"
+                className="group flex items-center gap-3 rounded-2xl bg-surface-container-lowest px-5 py-4 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md"
+              >
+                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-blue-500/10">
+                  <Trophy className="h-6 w-6 text-blue-600" fill="currentColor" />
+                </span>
+                <span className="font-label-md text-label-md font-bold text-on-surface">
+                  Sports Club
+                </span>
+              </Link>
+            </div>
+          </div>
         </section>
       </main>
     </div>

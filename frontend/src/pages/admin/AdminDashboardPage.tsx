@@ -2,20 +2,20 @@ import { LogOut, Settings } from "lucide-react";
 import { Navigate, useNavigate } from "react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
-import { apiFetch } from "../lib/api";
-import { useUiStore } from "../store/useUiStore";
+import { apiFetch } from "../../lib/api";
+import { useUiStore } from "../../store/useUiStore";
 
-import type { AdminMeResponse } from "../types/admin";
+import type { AdminMeResponse } from "../../types/admin";
 
-import PageLoader from "../components/PageLoader";
+import PageLoader from "../../components/PageLoader";
 
-import { Button } from "../components/ui/button";
+import { Button } from "../../components/ui/button";
 
-import ProfessorManagement from "../components/admin/ProfessorManagement";
-import EmployeeManagement from "../components/admin/EmployeeManagement";
-import ChangeCredentialsForm from "../components/admin/ChangeCredentialsForm";
+import ProfessorManagement from "../../components/admin/ProfessorManagement";
+import EmployeeManagement from "../../components/admin/EmployeeManagement";
+import ChangeCredentialsForm from "../../components/admin/ChangeCredentialsForm";
 
-import NoticeManagement from "../components/admin/NoticeManagement";
+import NoticeManagement from "../../components/admin/NoticeManagement";
 
 export default function AdminDashboardPage() {
   const navigate = useNavigate();

@@ -1,4 +1,4 @@
-import HashtagPhotoTable from "../components/HashtagPhotoTable";
+import HashtagPhotoTable from "../../components/HashtagPhotoTable";
 
 function OfficialsPage() {
   return (
