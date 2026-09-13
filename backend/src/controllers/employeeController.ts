@@ -1,8 +1,4 @@
-import type {
-  Request,
-  Response,
-  NextFunction,
-} from "express";
+import type { Request, Response, NextFunction } from "express";
 
 import { db } from "../db";
 import { employees } from "../db/schema";
@@ -14,79 +10,64 @@ import { z } from "zod";
 /*                              VALIDATION                                    */
 /* -------------------------------------------------------------------------- */
 
-const optionalText = z
-  .string()
-  .optional()
-  .nullable();
+const optionalText = z.string().optional().nullable();
 
 const optionalImageUrl = z
-  .union([
-    z.url(),
-    z.literal(""),
-  ])
+  .union([z.url(), z.literal("")])
   .optional()
   .nullable();
 
 const employeeCreate = z.object({
-  name: z
-    .string()
-    .trim()
-    .min(1, "Name is required."),
+  name: z.string().trim().min(1, "Name is required."),
 
   designation: optionalText,
+
+  bcsBatch: optionalText, // NEW
 
   imageUrl: optionalImageUrl,
 
   phoneNo: optionalText,
 
   email: z
-    .email("Please enter a valid email address.")
-    .trim(),
+    .union([z.email("Please enter a valid email address."), z.literal("")])
+    .optional()
+    .nullable(), // CHANGED - now optional like professors' email
 
-  gender: z.enum([
-    "Male",
-    "Female",
-    "Other",
-  ]),
+  gender: z.enum(["Male", "Female", "Other"]),
 });
 
-const employeePatch =
-  employeeCreate.partial();
+const employeePatch = employeeCreate.partial();
 
 const employeeIdSchema = z.uuid();
 
 /* -------------------------------------------------------------------------- */
 /*                         BUILD UPDATE DATA                                  */
 /* -------------------------------------------------------------------------- */
-
-function buildEmployeeUpdateSet(
-  body: z.infer<typeof employeePatch>,
-) {
-  const data: Partial<
-    typeof employees.$inferInsert
-  > = {};
+function buildEmployeeUpdateSet(body: z.infer<typeof employeePatch>) {
+  const data: Partial<typeof employees.$inferInsert> = {};
 
   if (body.name !== undefined) {
     data.name = body.name;
   }
 
   if (body.designation !== undefined) {
-    data.designation =
-      body.designation || null;
+    data.designation = body.designation || null;
+  }
+
+  if (body.bcsBatch !== undefined) {
+    data.bcsBatch = body.bcsBatch || null;
   }
 
   if (body.imageUrl !== undefined) {
-    data.imageUrl =
-      body.imageUrl || null;
+    data.imageUrl = body.imageUrl || null;
   }
 
   if (body.phoneNo !== undefined) {
-    data.phoneNo =
-      body.phoneNo || null;
+    data.phoneNo = body.phoneNo || null;
   }
 
   if (body.email !== undefined) {
-    data.email = body.email;
+    data.email = body.email || null;
   }
 
   if (body.gender !== undefined) {
@@ -109,9 +90,7 @@ export async function listAdminEmployees(
     const rows = await db
       .select()
       .from(employees)
-      .orderBy(
-        desc(employees.createdAt),
-      );
+      .orderBy(desc(employees.createdAt));
 
     res.json({
       employees: rows,
@@ -131,40 +110,32 @@ export async function createAdminEmployee(
   next: NextFunction,
 ) {
   try {
-    const parsed =
-      employeeCreate.safeParse(req.body);
+    const parsed = employeeCreate.safeParse(req.body);
 
     if (!parsed.success) {
       res.status(400).json({
         error: "Invalid body",
-        details: z.treeifyError(
-          parsed.error,
-        ),
+        details: z.treeifyError(parsed.error),
       });
 
       return;
     }
 
-    const {
-      designation,
-      imageUrl,
-      phoneNo,
-      ...rest
-    } = parsed.data;
+    const { designation, bcsBatch, imageUrl, phoneNo, email, ...rest } =
+      parsed.data;
 
     const [row] = await db
       .insert(employees)
       .values({
         ...rest,
-        designation:
-          designation || null,
-        imageUrl:
-          imageUrl || null,
-        phoneNo:
-          phoneNo || null,
+        designation: designation || null,
+        bcsBatch: bcsBatch || null,
+        imageUrl: imageUrl || null,
+        phoneNo: phoneNo || null,
+        email: email || null,
       })
       .returning();
-
+      
     res.status(201).json({
       employee: row,
     });
@@ -183,10 +154,7 @@ export async function updateAdminEmployee(
   next: NextFunction,
 ) {
   try {
-    const idResult =
-      employeeIdSchema.safeParse(
-        req.params.id,
-      );
+    const idResult = employeeIdSchema.safeParse(req.params.id);
 
     if (!idResult.success) {
       res.status(400).json({
@@ -196,28 +164,20 @@ export async function updateAdminEmployee(
       return;
     }
 
-    const parsed =
-      employeePatch.safeParse(req.body);
+    const parsed = employeePatch.safeParse(req.body);
 
     if (!parsed.success) {
       res.status(400).json({
         error: "Invalid body",
-        details: z.treeifyError(
-          parsed.error,
-        ),
+        details: z.treeifyError(parsed.error),
       });
 
       return;
     }
 
-    const data =
-      buildEmployeeUpdateSet(
-        parsed.data,
-      );
+    const data = buildEmployeeUpdateSet(parsed.data);
 
-    if (
-      Object.keys(data).length === 0
-    ) {
+    if (Object.keys(data).length === 0) {
       res.status(400).json({
         error: "No fields to update",
       });
@@ -231,12 +191,7 @@ export async function updateAdminEmployee(
         ...data,
         updatedAt: new Date(),
       })
-      .where(
-        eq(
-          employees.id,
-          idResult.data,
-        ),
-      )
+      .where(eq(employees.id, idResult.data))
       .returning();
 
     if (!row) {
@@ -265,10 +220,7 @@ export async function deleteAdminEmployee(
   next: NextFunction,
 ) {
   try {
-    const idResult =
-      employeeIdSchema.safeParse(
-        req.params.id,
-      );
+    const idResult = employeeIdSchema.safeParse(req.params.id);
 
     if (!idResult.success) {
       res.status(400).json({
@@ -281,12 +233,7 @@ export async function deleteAdminEmployee(
     const [existing] = await db
       .select()
       .from(employees)
-      .where(
-        eq(
-          employees.id,
-          idResult.data,
-        ),
-      )
+      .where(eq(employees.id, idResult.data))
       .limit(1);
 
     if (!existing) {
@@ -297,14 +244,7 @@ export async function deleteAdminEmployee(
       return;
     }
 
-    await db
-      .delete(employees)
-      .where(
-        eq(
-          employees.id,
-          idResult.data,
-        ),
-      );
+    await db.delete(employees).where(eq(employees.id, idResult.data));
 
     res.json({
       ok: true,

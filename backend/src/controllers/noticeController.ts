@@ -87,7 +87,6 @@ export async function updateNotice(
   next: NextFunction,
 ) {
   try {
-    
     const idResult = z.uuid().safeParse(req.params.id);
 
     if (!idResult.success) {

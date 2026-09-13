@@ -1,7 +1,11 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { apiFetch } from "../lib/api";
-import type {Employee,EmployeesResponse,EmployeeFormData,} from "../types/admin";
+import type {
+  Employee,
+  EmployeesResponse,
+  EmployeeFormData,
+} from "../types/admin";
 
 export function useEmployees() {
   const queryClient = useQueryClient();
@@ -20,9 +24,10 @@ export function useEmployees() {
         body: JSON.stringify({
           ...data,
           designation: data.designation.trim() || null,
+          bcsBatch: data.bcsBatch.trim() || null,
           imageUrl: data.imageUrl.trim() || null,
           phoneNo: data.phoneNo.trim() || null,
-          email: data.email.trim().toLowerCase(),
+          email: data.email.trim().toLowerCase() || null,
         }),
       }),
 
@@ -40,11 +45,11 @@ export function useEmployees() {
         method: "PATCH",
         body: JSON.stringify({
           ...data,
-
           designation: data.designation.trim() || null,
+          bcsBatch: data.bcsBatch.trim() || null,
           imageUrl: data.imageUrl.trim() || null,
           phoneNo: data.phoneNo.trim() || null,
-          email: data.email.trim().toLowerCase(),
+          email: data.email.trim().toLowerCase() || null,
         }),
       }),
 

@@ -27,6 +27,3 @@ router.patch("/:id", updateAdminProfessor);
 router.delete("/:id", deleteAdminProfessor);
 
 export default router;
-
-
-

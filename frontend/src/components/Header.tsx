@@ -19,6 +19,7 @@ type NavItem =
   | { label: string; type: "drawer" };
 
 const navItems: NavItem[] = [
+  { label: "হোম", type: "link", to: "/" },   // NEW - added at the start
   { label: "ভর্তি", type: "link", to: "/admission" },
   { label: "যোগাযোগ", type: "drawer" },
 ];

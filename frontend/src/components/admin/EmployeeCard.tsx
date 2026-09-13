@@ -1,10 +1,7 @@
 import { Mail, Pencil, Phone, Trash2, UserRound } from "lucide-react";
 
 import { Button } from "../ui/button";
-import {
-  Card,
-  CardContent,
-} from "../ui/card";
+import { Card, CardContent } from "../ui/card";
 
 import type { Employee } from "../../types/admin";
 
@@ -56,9 +53,7 @@ export default function EmployeeCard({
       {/* ------------------------------------------------------------------ */}
 
       <CardContent className="p-5">
-        <h3 className="font-heading text-xl font-bold">
-          {employee.name}
-        </h3>
+        <h3 className="font-heading text-xl font-bold">{employee.name}</h3>
 
         {employee.designation && (
           <p className="mt-1 text-sm font-medium text-primary">
@@ -67,18 +62,25 @@ export default function EmployeeCard({
         )}
 
         <div className="mt-4 space-y-2">
-          {/* Email */}
-          <div className="flex min-w-0 items-center gap-2 text-sm text-muted-foreground">
-            <Mail className="h-4 w-4 shrink-0" />
-            <span className="truncate">{employee.email}</span>
-          </div>
+          {employee.email && (
+            <div className="flex min-w-0 items-center gap-2 text-sm text-muted-foreground">
+              <Mail className="h-4 w-4 shrink-0" />
+              <span className="truncate">{employee.email}</span>
+            </div>
+          )}
 
-          {/* Phone */}
           {employee.phoneNo && (
             <div className="flex min-w-0 items-center gap-2 text-sm text-muted-foreground">
               <Phone className="h-4 w-4 shrink-0" />
               <span className="truncate">{employee.phoneNo}</span>
             </div>
+          )}
+
+          {employee.bcsBatch && (
+            <p className="text-sm text-muted-foreground">
+              <span className="font-medium text-foreground">BCS Batch:</span>{" "}
+              {employee.bcsBatch}
+            </p>
           )}
         </div>
 
@@ -108,9 +110,7 @@ export default function EmployeeCard({
               <Trash2 />
             )}
 
-            <span className="sr-only">
-              Delete {employee.name}
-            </span>
+            <span className="sr-only">Delete {employee.name}</span>
           </Button>
         </div>
       </CardContent>

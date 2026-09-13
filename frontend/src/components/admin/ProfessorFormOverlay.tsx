@@ -1,10 +1,3 @@
-
-
-
-
-
-
-
 import { useEffect } from "react";
 import { X } from "lucide-react";
 
@@ -121,5 +114,3 @@ export default function ProfessorFormOverlay({
     </div>
   );
 }
-
-

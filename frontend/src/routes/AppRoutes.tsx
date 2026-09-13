@@ -19,7 +19,7 @@ import PrinciplesDialoguePage from "../pages/dialogue/PrinciplesDialoguePage";
 import VicePrinciplesDialoguePage from "../pages/dialogue/VicePrinciplesDialoguePage";
 import AssistantProfessorPage from "../pages/faculty & employee/AssistantProfessorPage";
 import LecturerPage from "../pages/faculty & employee/LecturerPage";
-import ExhibitorPage from "../pages/faculty & employee/ExhibitorPage";
+import ExhibitorPage from "../pages/faculty & employee/DemonstratorPage";
 import SpandanPage from "../pages/clubs/SpandanPage";
 import BNCCPage from "../pages/clubs/BNCCPage";
 import SportsClubPage from "../pages/clubs/SportsClubPage";
